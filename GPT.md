@@ -18,7 +18,7 @@
 - 1.对于无标签数据损失函数的设定
 - 2.由文本的输出到其他子任务的转化
 ## 模型架构
-- ![img](Pasted%20image%2020240903151027.png)
+- ![img](https://github.com/ShiBowen101/LLM-study-notes/blob/main/pictures/Pasted%20image%2020240903151027.png)
 - 目标函数为使得长为$K$的序列用最大的概率与训练给出的文本尽可能的相同
 - ### 编码器与解码器
 - 编码器无mask部分，目的是语义的融合->BERT->完形填空
