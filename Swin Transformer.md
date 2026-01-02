@@ -1,0 +1,28 @@
+### Transformer应用于视觉领域的挑战
+- 针对不同语义的对象尺寸并不统一
+- 序列长度（以VIT为例）随着图片的size和分辨呈平方上涨，而Swin Transformer呈线性增长
+- 由于对图片以固定倍率进行下采样，难以应对多尺寸特征
+- 由于对图片而言，相似的特征往往分布靠近，不需要针对全局进行自注意力
+## 架构
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241015214306.png)
+- 通过shift window使得不同patch间的信息进行交流
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241015215126.png)
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241015215154.png)
+- image（$H\times W\times 3$）->patch($\frac{H}{4}\times \frac{H}{4}\times 48$)->linear embedding{strech($\frac{H^2}{4^2}\times48$) and embedding($\frac{H^2}{4^2}\times C_{embedding}$)}
+- #### Patch Merging
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241015221148.png)
+- （$H\times W$）->按照1,2,3,4编号分割组合($\frac{H}{2}\times\frac{W}{2}\times 4$) ->利用$1\times 1$卷积核改变通道数 ->            ($\frac{H}{2}\times\frac{W}{2}\times 2$)
+- 完成一个CNN中的类似过程
+- #### 划分窗口，进行局部的自注意力
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241016001622.png)
+- 此时计算复杂度远低于全局自注意力
+- #### shift window
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241016001839.png)
+- 先进行窗口内部的多头自注意力，在shift window后进行窗口间的自注意力
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241016002212.png)
+- 由于窗口的尺寸不同，导致无法打包成为一个batch进行加速
+- ##### 解决
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241016002633.png)
+- 循环位移->重新划分为等分->掩码自注意力计算（防止不相干的位置进行自注意力）->还原
+- ![image.png](https://raw.githubusercontent.com/ShiBowen101/PicGo_imgs/main/obsidian/20241016153051.png)
+- 描述
